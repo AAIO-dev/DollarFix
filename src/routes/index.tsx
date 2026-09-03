@@ -133,7 +133,7 @@ function Hero() {
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
           A suite of powerful, single-purpose AI tools. Buy credits once, use them
-          universally across any app. No monthly subscriptions.
+          instantly. No monthly subscriptions.
         </p>
         <div className="mt-10 flex justify-center">
           <a
@@ -228,14 +228,23 @@ function Pricing() {
         <div className="relative mx-auto mb-12 max-w-4xl overflow-hidden rounded-3xl bg-primary p-8 text-center shadow-card sm:p-10">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary-foreground/5 to-transparent" />
           <h3 className="relative text-2xl font-extrabold tracking-tight text-primary-foreground sm:text-3xl">
-            🚀 Unlock Universal Credits!
+            🔒 Transparency Note
           </h3>
-          <p className="relative mx-auto mt-3 max-w-2xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
-            Create a free account to use your credit balance universally across
-            ALL 5 DollarFix apps. (Without an account, credits remain locked to
-            your current device).
-          </p>
-          <div className="relative mt-6 flex justify-center">
+          <div className="relative mx-auto mt-5 max-w-2xl space-y-4 text-left text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
+            <p>
+              <span className="font-semibold text-primary-foreground">Guest Checkout:</span>{" "}
+              You can buy credits instantly without an account, but your balance
+              will be strictly locked to your current device and only valid for
+              the single app you purchased it from.
+            </p>
+            <p>
+              <span className="font-semibold text-primary-foreground">Free Account (Recommended):</span>{" "}
+              Sign up to convert your balance into Universal Credits! Your
+              credits will sync across all devices and work seamlessly across
+              ALL 5 DollarFix apps.
+            </p>
+          </div>
+          <div className="relative mt-8 flex justify-center">
             <a
               href="/signup"
               className="group inline-flex h-12 items-center gap-2 rounded-xl bg-background px-8 text-base font-semibold text-foreground shadow-soft transition-all duration-200 hover:bg-secondary hover:shadow-glow"
