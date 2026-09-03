@@ -107,18 +107,18 @@ function Header() {
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Logo />
         <div className="flex items-center gap-2 sm:gap-3">
-          <Link
-            to="/login"
+          <a
+            href="/login"
             className="inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
           >
             Log in
-          </Link>
-          <Link
-            to="/signup"
+          </a>
+          <a
+            href="/signup"
             className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-soft transition-all duration-200 hover:bg-primary/90 hover:shadow-glow"
           >
             Sign up
-          </Link>
+          </a>
         </div>
       </div>
     </header>
@@ -194,8 +194,8 @@ function AppDirectory() {
                 <p className="mt-2 flex-1 text-sm leading-relaxed text-muted-foreground">
                   {app.description}
                 </p>
-                <Link
-                  to={app.href}
+                <a
+                  href={app.href}
                   className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
                 >
                   Launch App
@@ -203,7 +203,7 @@ function AppDirectory() {
                     size={14}
                     className="transition-transform duration-200 group-hover:translate-x-0.5"
                   />
-                </Link>
+                </a>
               </div>
             );
           })}
