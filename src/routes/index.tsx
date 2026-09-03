@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Zap,
   Check,
-  Info,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -226,7 +225,7 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-3xl bg-primary p-8 text-center shadow-card sm:p-10">
+        <div className="relative mx-auto mb-12 max-w-4xl overflow-hidden rounded-3xl bg-primary p-8 text-center shadow-card sm:p-10">
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary-foreground/5 to-transparent" />
           <h3 className="relative text-2xl font-extrabold tracking-tight text-primary-foreground sm:text-3xl">
             🚀 Unlock Universal Credits!
