@@ -8,7 +8,6 @@ import {
   ArrowRight,
   Zap,
   Check,
-  Info,
 } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -226,20 +225,27 @@ function Pricing() {
           </p>
         </div>
 
-        <div className="mx-auto mb-12 max-w-3xl rounded-2xl border border-indigo/20 bg-indigo/5 p-5 text-sm leading-relaxed text-foreground sm:p-6">
-          <div className="flex items-start gap-3">
-            <Info
-              size={18}
-              className="mt-0.5 shrink-0 text-primary"
-              aria-hidden="true"
-            />
-            <p>
-              <span className="font-semibold">Transparency Note:</span> Using our
-              tools without an account binds your credits to your current device.
-              Creating a free account transforms your balance into{" "}
-              <span className="font-semibold">Universal Cloud Credits</span>, usable
-              across all DollarFix apps!
-            </p>
+        <div className="relative mx-auto mb-12 max-w-4xl overflow-hidden rounded-3xl bg-primary p-8 text-center shadow-card sm:p-10">
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary-foreground/5 to-transparent" />
+          <h3 className="relative text-2xl font-extrabold tracking-tight text-primary-foreground sm:text-3xl">
+            🚀 Unlock Universal Credits!
+          </h3>
+          <p className="relative mx-auto mt-3 max-w-2xl text-base leading-relaxed text-primary-foreground/90 sm:text-lg">
+            Create a free account to use your credit balance universally across
+            ALL 5 DollarFix apps. (Without an account, credits remain locked to
+            your current device).
+          </p>
+          <div className="relative mt-6 flex justify-center">
+            <a
+              href="/signup"
+              className="group inline-flex h-12 items-center gap-2 rounded-xl bg-background px-8 text-base font-semibold text-foreground shadow-soft transition-all duration-200 hover:bg-secondary hover:shadow-glow"
+            >
+              Sign Up Now
+              <ArrowRight
+                size={18}
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </a>
           </div>
         </div>
 
