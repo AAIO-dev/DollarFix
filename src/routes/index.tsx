@@ -128,7 +128,7 @@ function Hero() {
   return (
     <section className="relative overflow-hidden px-4 pb-20 pt-16 sm:px-6 sm:pt-24 lg:px-8 lg:pt-32">
       <div className="mx-auto max-w-4xl text-center">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gradient sm:text-5xl md:text-6xl lg:text-7xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-gradient sm:text-4xl md:text-5xl lg:text-6xl">
           One problem, one dollar. Ping it!
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
