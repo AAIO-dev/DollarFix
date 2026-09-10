@@ -604,35 +604,35 @@ function Index() {
       icon: Briefcase,
       title: "PitchPing",
       description: translations[language].pitchPingDesc,
-      href: "/app/pitchping",
+      href: "https://pitchping.dollarfix.net", // التعديل هنا
       iconClass: "text-white bg-[oklch(0.70_0.17_45)]",
     },
     {
       icon: Code2,
       title: "CodePing",
       description: translations[language].codePingDesc,
-      href: "/app/codeping",
+      href: "https://codeping.dollarfix.net", // التعديل هنا
       iconClass: "text-white bg-[oklch(0.60_0.16_285)]",
     },
     {
       icon: FileText,
       title: "ResumePing",
       description: translations[language].resumePingDesc,
-      href: "/app/resumeping",
+      href: "https://resumeping.dollarfix.net", // التعديل هنا
       iconClass: "text-white bg-[oklch(0.60_0.16_160)]",
     },
     {
       icon: FileSearch,
       title: "PaperPing",
       description: translations[language].paperPingDesc,
-      href: "/app/paperping",
+      href: "https://paperping.dollarfix.net", // التعديل هنا
       iconClass: "text-white bg-[oklch(0.58_0.21_254)]",
     },
     {
       icon: GraduationCap,
       title: "BandPing",
       description: translations[language].bandPingDesc,
-      href: "/app/bandping",
+      href: "https://bandping.dollarfix.net", // التعديل هنا
       iconClass: "text-white bg-[oklch(0.45_0.18_25)]",
     },
   ];
