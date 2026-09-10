@@ -421,6 +421,8 @@ function AppDirectory({ apps, language }: { apps: any[]; language: Language }) {
                 </p>
                 <a
                   href={app.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2.5 text-sm font-medium text-foreground transition-all duration-200 hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
                 >
                   {translations[language].launchApp}
@@ -446,6 +448,7 @@ function Pricing({ language }: { language: Language }) {
       note: translations[language].tierNote1,
       featured: false,
       stripeLink: "https://buy.stripe.com/5kQ9AS25U9Oz9A2f7K57W02",
+      bgClass: "bg-card border-slate-300 dark:border-slate-700",
     },
     {
       credits: 300,
@@ -453,6 +456,7 @@ function Pricing({ language }: { language: Language }) {
       note: translations[language].tierNote2,
       featured: false,
       stripeLink: "https://buy.stripe.com/8x2cN46ma6CnaE6cZC57W00",
+      bgClass: "bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 border-slate-300 dark:border-slate-700", // الفضي
     },
     {
       credits: 500,
@@ -460,6 +464,7 @@ function Pricing({ language }: { language: Language }) {
       note: translations[language].tierNote3,
       featured: true,
       stripeLink: "https://buy.stripe.com/aFa00i9ym5yjdQigbO57W01",
+      bgClass: "bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-yellow-900/30 dark:to-amber-900/20 border-yellow-300 dark:border-yellow-700", // الذهبي
     },
   ];
 
@@ -517,11 +522,7 @@ function Pricing({ language }: { language: Language }) {
           {tiers.map((tier) => (
             <div
               key={tier.credits}
-              className={`relative flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover ${
-                tier.featured
-                  ? "border-primary/30 bg-card shadow-card"
-                  : "border-border bg-card/60 shadow-soft"
-              }`}
+              className={`relative flex flex-col rounded-2xl border p-6 transition-all duration-300 hover:-translate-y-1 shadow-soft hover:shadow-card-hover ${tier.bgClass}`}
             >
               {tier.featured && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-soft">
@@ -554,11 +555,7 @@ function Pricing({ language }: { language: Language }) {
               <button
                 type="button"
                 onClick={() => handleBuyClick(tier.stripeLink)}
-                className={`w-full rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 ${
-                  tier.featured
-                    ? "bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 hover:shadow-glow"
-                    : "border border-border bg-background text-foreground hover:border-primary/30 hover:bg-primary/5 hover:text-primary"
-                }`}
+                className="w-full rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 hover:shadow-glow"
               >
                 {translations[language].buyCredits}
               </button>
