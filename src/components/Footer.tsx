@@ -144,6 +144,10 @@ export default function Footer({ language }: { language: string }) {
             >
               {legalTranslations[language]?.privacy || legalTranslations["en"].privacy}
             </button>
+            {/* ✉️ السطر الجديد الخاص بالإيميل */}
+  <a href="mailto:contact@dollarfix.net" className="hover:text-primary transition-colors">
+    contact@dollarfix.net
+  </a>
           </div>
           <p className="text-sm text-muted-foreground/60">
   &copy; {new Date().getFullYear()} DollarFix. {legalTranslations[language]?.rights || legalTranslations["en"].rights}
