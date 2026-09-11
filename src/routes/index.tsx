@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import Footer from "../components/Footer";
 import {
   Briefcase,
   Code2,
@@ -573,18 +574,6 @@ function Pricing({ language }: { language: Language }) {
   );
 }
 
-function Footer({ language }: { language: Language }) {
-  return (
-    <footer className="border-t border-border bg-background px-4 py-10 sm:px-6 lg:px-8">
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
-        <Logo />
-        <p className="text-sm text-muted-foreground">
-          {translations[language].footer}
-        </p>
-      </div>
-    </footer>
-  );
-}
 
 function Index() {
   const [language, setLanguage] = useState<Language>(() => {
