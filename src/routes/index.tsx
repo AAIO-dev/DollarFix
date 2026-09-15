@@ -263,9 +263,11 @@ export const Route = createFileRoute("/")({
 function Logo() {
   return (
     <Link to="/" className="group flex items-center gap-2.5">
-      <div className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-primary-foreground shadow-soft transition-all duration-300 group-hover:shadow-glow">
-        <Zap size={18} strokeWidth={2.5} />
-      </div>
+      <img 
+        src="/DF-logo.png" 
+        alt="DollarFix Logo" 
+        className="h-10 w-10 object-contain transition-transform duration-300 group-hover:scale-105"
+      />
       <span className="text-xl font-bold tracking-tight text-foreground">
         DollarFix
       </span>
