@@ -354,7 +354,7 @@ function AuthModal({
             Sign In / Register
           </h2>
           <p className="mb-6 text-center text-sm text-muted-foreground">
-            Create an account to get universal credits across all apps.
+            Sign up now to get 2 FREE Pings! Try any of our specialized AI tools instantly.
           </p>
 
           <div className="flex flex-col gap-3 mb-6">
