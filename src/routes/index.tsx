@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
 import Footer from "../components/Footer";
 import {
   Briefcase,
@@ -282,6 +280,12 @@ function AuthModal({
   isOpen: boolean;
   onClose: () => void;
 }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false); // للتبديل بين تسجيل الدخول والتسجيل الجديد
+
   if (!isOpen) return null;
 
   const handleSocialLogin = async (provider: 'google' | 'facebook' | 'linkedin_oidc') => {
@@ -293,12 +297,54 @@ function AuthModal({
     });
   };
 
+  const handleEmailAuth = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg("");
+
+    // 1. الفلترة الأمامية (Frontend Validation)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMsg("Please enter a valid email address.");
+      return;
+    }
+    if (password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters.");
+      return;
+    }
+
+    // 2. تفعيل حالة التحميل لمنع النقرات المتعددة (Rate Limit Protection)
+    setIsLoading(true);
+
+    try {
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+        if (error) throw error;
+        setErrorMsg("Success! Please check your email to verify your account.");
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        onClose(); // إغلاق النافذة بنجاح
+      }
+    } catch (err: any) {
+      setErrorMsg(err.message || "An error occurred.");
+    } finally {
+      setIsLoading(false); // إعادة تفعيل الزر بعد وصول الرد من الخادم
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
       <div className="relative w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-2xl animate-fade-in">
         <button 
           onClick={onClose} 
           className="absolute right-4 top-4 rounded-full p-2 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+          disabled={isLoading}
         >
           <X className="h-4 w-4" />
         </button>
@@ -314,7 +360,8 @@ function AuthModal({
           <div className="flex flex-col gap-3 mb-6">
             <button 
               onClick={() => handleSocialLogin('google')}
-              className="flex items-center justify-center gap-3 w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted/50"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-3 w-full rounded-lg border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground transition hover:bg-muted/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="h-5 w-5" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -327,7 +374,8 @@ function AuthModal({
 
             <button 
               onClick={() => handleSocialLogin('facebook')}
-              className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#1877F2]/20 bg-[#1877F2]/5 text-[#1877F2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#1877F2]/10"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#1877F2]/20 bg-[#1877F2]/5 text-[#1877F2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#1877F2]/10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -337,7 +385,8 @@ function AuthModal({
 
             <button 
               onClick={() => handleSocialLogin('linkedin_oidc')}
-              className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#0A66C2]/20 bg-[#0A66C2]/5 text-[#0A66C2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#0A66C2]/10"
+              disabled={isLoading}
+              className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#0A66C2]/20 bg-[#0A66C2]/5 text-[#0A66C2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#0A66C2]/10 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
@@ -355,11 +404,57 @@ function AuthModal({
             </div>
           </div>
 
-          <Auth 
-            supabaseClient={supabase} 
-            appearance={{ theme: ThemeSupa }} 
-            providers={[]} 
-          />
+          {/* النموذج المخصص والآمن للبريد الإلكتروني بدلاً من <Auth /> */}
+          <form onSubmit={handleEmailAuth} className="flex flex-col gap-4">
+            <div>
+              <input
+                type="email"
+                placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+              />
+            </div>
+            
+            <div>
+              <input
+                type="password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
+                className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+              />
+            </div>
+
+            {errorMsg && (
+              <div className={`text-sm text-center font-medium ${errorMsg.includes("Success") ? "text-emerald-500" : "text-red-500"}`}>
+                {errorMsg}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-bold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? "Processing..." : (isSignUp ? "Sign Up" : "Sign In")}
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                setIsSignUp(!isSignUp);
+                setErrorMsg("");
+              }}
+              disabled={isLoading}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}
+            </button>
+          </form>
+
         </div>
       </div>
     </div>
