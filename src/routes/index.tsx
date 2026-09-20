@@ -684,15 +684,23 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
   const [credits, setCredits] = useState<number>(0);
 
   useEffect(() => {
+    // 1. التحقق عند التحميل (هذا السطر يقتنص المستخدم العائد من جوجل/فيسبوك)
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
-      if (session?.user) fetchCredits(session.user.id);
+      if (session?.user) {
+        handleGlobalLogin(session.user.id);
+      }
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    // 2. المراقب المستمر لحالة المصادقة
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchCredits(session.user.id);
+        if (event === 'SIGNED_IN') {
+          handleGlobalLogin(session.user.id);
+        } else {
+          fetchCredits(session.user.id);
+        }
       } else {
         setCredits(0);
       }
@@ -700,6 +708,46 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // دالة المزامنة الشاملة للرصيد (تعمل مع كل طرق الدخول)
+  const handleGlobalLogin = async (userId: string) => {
+    const appKeys = [
+      'pitchping_credits',
+      'codeping_credits',
+      'resumeping_credits',
+      'paperping_credits',
+      'bandping_credits'
+    ];
+    
+    let totalLocalCredits = 0;
+    appKeys.forEach(key => {
+      const val = parseInt(localStorage.getItem(key) || '0', 10);
+      if (!isNaN(val) && val > 0) {
+        totalLocalCredits += val;
+        localStorage.removeItem(key); // تفريغ الرصيد المحلي بعد جمعه
+      }
+    });
+
+    if (totalLocalCredits > 0) {
+      // نجلب الرصيد الحالي للمستخدم (الرصيد المجاني التلقائي) أولاً لكي لا نمسحه
+      const { data } = await supabase
+        .from("profiles")
+        .select("ping_credits")
+        .eq("id", userId)
+        .single();
+        
+      const currentCredits = data?.ping_credits || 0;
+      
+      // نضيف الرصيد المحلي فوق الرصيد المجاني الأساسي
+      await supabase
+        .from('profiles')
+        .update({ ping_credits: currentCredits + totalLocalCredits })
+        .eq('id', userId);
+    }
+    
+    // في النهاية نجلب الرصيد النهائي لعرضه في الواجهة
+    fetchCredits(userId);
+  };
 
   const fetchCredits = async (userId: string) => {
     const { data } = await supabase
@@ -723,8 +771,7 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
           
           {/* Language Selector */}
           <div className="relative inline-flex items-center">
-            
-            {/* Desktop View (Full Select) */}
+            {/* Desktop View */}
             <div className="hidden md:flex relative items-center">
               <Globe className="absolute left-2.5 h-4 w-4 text-muted-foreground" />
               <select
@@ -742,7 +789,7 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
               </select>
             </div>
 
-            {/* Mobile View (Compact & Hidden Select) */}
+            {/* Mobile View */}
             <div className="md:hidden relative flex items-center justify-center px-1 h-8">
               <Globe className="h-3.5 w-3.5 text-muted-foreground mr-1" />
               <span className="text-[11px] font-bold uppercase">{language}</span>
@@ -764,6 +811,14 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
           {/* Auth Buttons */}
           {user ? (
             <div className="flex items-center gap-1.5 sm:gap-3">
+              
+              {/* إضافة معرّف المستخدم (الإيميل) هنا */}
+              <div className="hidden md:flex items-center px-3 py-1.5 rounded-lg border border-border bg-muted/20">
+                <span className="text-xs font-medium text-muted-foreground truncate max-w-[180px]" title={user.email}>
+                  {user.email}
+                </span>
+              </div>
+
               <div className="flex items-center gap-1 sm:gap-1.5 rounded-lg border border-border bg-card px-2 sm:px-3 py-1 sm:py-1.5 shadow-sm">
                 <span className="text-base sm:text-lg leading-none">🪙</span>
                 <span className="text-xs sm:text-sm font-bold text-foreground">
