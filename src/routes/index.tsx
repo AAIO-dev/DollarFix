@@ -322,7 +322,7 @@ function AuthModal({
           password,
         });
         if (error) throw error;
-        onClose(); // إغلاق النافذة فوراً لأن المستخدم تم تسجيل دخوله بنجاح
+        setErrorMsg("Success! Please check your email to verify your account.");
       } else {
         const { error } = await supabase.auth.signInWithPassword({
           email,
