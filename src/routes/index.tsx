@@ -321,7 +321,6 @@ function AuthModal({
     });
   };
 
-  // 1. الدخول وإنشاء الحساب بكلمة المرور
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg("");
@@ -347,7 +346,7 @@ function AuthModal({
         });
         if (error) throw error;
         setSuccessMsg("Success! Please check your email to verify your account.");
-        setOtpType('signup'); // تحديد نوع التحقق
+        setOtpType('signup');
         setIsOtpStep(true);
       } else {
         const { error } = await supabase.auth.signInWithPassword({
@@ -364,7 +363,6 @@ function AuthModal({
     }
   };
 
-  // 2. طلب رمز الدخول السريع (في حال نسيان كلمة المرور)
   const handleSendLoginOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -374,7 +372,7 @@ function AuthModal({
     const { error: otpError } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        shouldCreateUser: false, // منع إنشاء حساب جديد من هذه الواجهة
+        shouldCreateUser: false,
       }
     });
 
@@ -385,12 +383,11 @@ function AuthModal({
     }
 
     setSuccessMsg("Success! We've sent a login code to your email.");
-    setOtpType('email'); // تحديد نوع التحقق للدخول
+    setOtpType('email');
     setIsOtpStep(true);
     setIsLoading(false);
   };
 
-  // 3. التحقق من الرمز المدخل (يخدم التسجيل الجديد والدخول السريع)
   const handleVerifyOtp = async (token: string) => {
     setOtpLoading(true);
     setErrorMsg("");
@@ -398,7 +395,7 @@ function AuthModal({
     const { data, error: verifyError } = await supabase.auth.verifyOtp({
       email,
       token,
-      type: otpType, // ديناميكي بناءً على العملية السابقة
+      type: otpType, 
     });
 
     if (verifyError) {
@@ -407,7 +404,7 @@ function AuthModal({
       return;
     }
 
-    // نقل الرصيد بعد نجاح التفعيل (مهم للمسجلين الجدد)
+    // نقل الرصيد بعد نجاح التفعيل (للتسجيل الجديد فقط)
     if (data?.user && otpType === 'signup') {
       const appKeys = [
         'pitchping_credits',
@@ -445,7 +442,6 @@ function AuthModal({
     }
   };
 
-  // 4. إعادة إرسال الكود حسب النوع
   const handleResendCode = async () => {
     setErrorMsg("");
     setSuccessMsg("");
@@ -503,7 +499,6 @@ function AuthModal({
 
           {!isOtpStep ? (
             <>
-              {/* أزرار تسجيل الدخول الاجتماعي (تختفي في وضع طلب الرمز لتبسيط الواجهة) */}
               {!isLoginOtpMode && (
                 <>
                   <div className="flex flex-col gap-3 mb-6">
@@ -520,7 +515,28 @@ function AuthModal({
                       </svg>
                       Sign in with Google
                     </button>
-                    {/* ... (أزرار فيسبوك ولينكد إن تبقى كما هي) ... */}
+                    
+                    <button 
+                      onClick={() => handleSocialLogin('facebook')}
+                      disabled={isLoading}
+                      className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#1877F2]/20 bg-[#1877F2]/5 text-[#1877F2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#1877F2]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                      Sign in with Facebook
+                    </button>
+
+                    <button 
+                      onClick={() => handleSocialLogin('linkedin_oidc')}
+                      disabled={isLoading}
+                      className="flex items-center justify-center gap-3 w-full rounded-lg border border-[#0A66C2]/20 bg-[#0A66C2]/5 text-[#0A66C2] px-4 py-2.5 text-sm font-semibold transition hover:bg-[#0A66C2]/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                      Sign in with LinkedIn
+                    </button>
                   </div>
 
                   <div className="relative mb-6">
@@ -557,7 +573,6 @@ function AuthModal({
                       className="w-full rounded-lg border border-border bg-background px-4 py-2.5 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
                     />
                     
-                    {/* رابط نسيان كلمة المرور يظهر فقط في حالة تسجيل الدخول */}
                     {!isSignUp && (
                       <div className="mt-2 text-right">
                         <button
@@ -614,7 +629,6 @@ function AuthModal({
               </form>
             </>
           ) : (
-            // واجهة إدخال الـ OTP (بعد إرسال الرمز)
             <div className="flex flex-col gap-4">
               <div>
                 <label className="mb-2 block text-center text-sm font-medium text-foreground">
