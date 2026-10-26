@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
@@ -14,7 +15,8 @@ import {
   Globe,
   LogOut,
   Menu,
-  X
+  X,
+  Loader2
 } from "lucide-react";
 
 export type Language = "en" | "es" | "pt" | "fr" | "hi" | "zh";
@@ -235,6 +237,41 @@ export const translations: Record<Language, any> = {
   }
 };
 
+const createCloudCheckout = createServerFn({ method: "POST" })
+  .validator((data: { priceId: string; userId: string; returnUrl: string }) => data)
+  .handler(async ({ data }) => {
+    const Stripe = (await import("stripe")).default as any;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: "2024-06-20",
+    });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{ price: data.priceId, quantity: 1 }],
+      mode: "payment",
+      client_reference_id: data.userId,
+      success_url: data.returnUrl + "?success=cloud",
+      cancel_url: data.returnUrl,
+    });
+    return session.url;
+  });
+
+const createGuestCheckout = createServerFn({ method: "POST" })
+  .validator((data: { priceId: string; returnUrl: string }) => data)
+  .handler(async ({ data }) => {
+    const Stripe = (await import("stripe")).default as any;
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+      apiVersion: "2024-06-20",
+    });
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{ price: data.priceId, quantity: 1 }],
+      mode: "payment",
+      success_url: data.returnUrl + "?success=true",
+      cancel_url: data.returnUrl,
+    });
+    return session.url;
+  });
+  
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -935,13 +972,15 @@ function AppDirectory({ apps, language }: { apps: any[]; language: Language }) {
 }
 
 function Pricing({ language, onOpenAuth }: { language: Language; onOpenAuth: () => void }) {
+  const [loadingTier, setLoadingTier] = useState<number | null>(null);
+
   const tiers = [
     {
       credits: 100,
       price: "$1",
       note: translations[language].tierNote1,
       featured: false,
-      stripeLink: "https://buy.stripe.com/5kQ9AS25U9Oz9A2f7K57W02",
+      priceId: "price_1UCMhMCXmAUBsCGpqKoXMw8x",
       bgClass: "bg-card border-slate-300 dark:border-slate-700",
     },
     {
@@ -949,7 +988,7 @@ function Pricing({ language, onOpenAuth }: { language: Language; onOpenAuth: () 
       price: "$2",
       note: translations[language].tierNote2,
       featured: false,
-      stripeLink: "https://buy.stripe.com/8x2cN46ma6CnaE6cZC57W00",
+      priceId: "price_1UCMhMCXmAUBsCGpJa6TlFhe",
       bgClass: "bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 border-slate-300 dark:border-slate-700", 
     },
     {
@@ -957,17 +996,34 @@ function Pricing({ language, onOpenAuth }: { language: Language; onOpenAuth: () 
       price: "$3",
       note: translations[language].tierNote3,
       featured: true,
-      stripeLink: "https://buy.stripe.com/aFa00i9ym5yjdQigbO57W01",
+      priceId: "price_1UCMhMCXmAUBsCGpP2sLbdkN",
       bgClass: "bg-gradient-to-br from-amber-50 to-yellow-100 dark:from-yellow-900/30 dark:to-amber-900/20 border-yellow-300 dark:border-yellow-700", 
     },
   ];
 
-  const handleBuyClick = async (stripeUrl: string) => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (session?.user) {
-      window.location.href = `${stripeUrl}?client_reference_id=${session.user.id}`;
-    } else {
-      window.location.href = stripeUrl;
+  const handleBuyClick = async (priceId: string, tierCredits: number) => {
+    setLoadingTier(tierCredits);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const returnUrl = window.location.origin + window.location.pathname;
+      
+      let url;
+      if (session?.user) {
+        url = await createCloudCheckout({
+          data: { priceId, userId: session.user.id, returnUrl }
+        });
+      } else {
+        url = await createGuestCheckout({
+          data: { priceId, returnUrl }
+        });
+      }
+      
+      if (url) window.location.href = url;
+    } catch (error) {
+      console.error("Payment error:", error);
+      alert("Error connecting to payment provider.");
+    } finally {
+      setLoadingTier(null);
     }
   };
 
@@ -1048,9 +1104,11 @@ function Pricing({ language, onOpenAuth }: { language: Language; onOpenAuth: () 
               </ul>
               <button
                 type="button"
-                onClick={() => handleBuyClick(tier.stripeLink)}
-                className="w-full rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 hover:shadow-glow"
+                onClick={() => handleBuyClick(tier.priceId, tier.credits)}
+                disabled={loadingTier === tier.credits}
+                className="inline-flex justify-center items-center gap-2 w-full rounded-lg py-2.5 text-sm font-semibold transition-all duration-200 bg-primary text-primary-foreground shadow-soft hover:bg-primary/90 hover:shadow-glow disabled:opacity-70 disabled:cursor-not-allowed"
               >
+                {loadingTier === tier.credits && <Loader2 className="h-4 w-4 animate-spin" />}
                 {translations[language].buyCredits}
               </button>
             </div>
@@ -1066,7 +1124,6 @@ function Pricing({ language, onOpenAuth }: { language: Language; onOpenAuth: () 
     </section>
   );
 }
-
 function Index() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [language, setLanguage] = useState<Language>(() => {
