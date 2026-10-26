@@ -875,15 +875,9 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
             <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={onOpenAuth}
-                className="inline-flex h-8 sm:h-10 items-center justify-center rounded-lg px-2 sm:px-4 text-xs sm:text-sm font-medium text-foreground transition-colors hover:bg-secondary hover:text-secondary-foreground"
+                className="inline-flex h-8 sm:h-10 items-center justify-center rounded-lg bg-primary px-3 sm:px-5 text-xs sm:text-sm font-medium text-primary-foreground shadow-soft transition-all duration-200 hover:bg-primary/90 hover:shadow-glow"
               >
-                {translations[language].login}
-              </button>
-              <button
-                onClick={onOpenAuth}
-                className="inline-flex h-8 sm:h-10 items-center justify-center rounded-lg bg-primary px-2 sm:px-4 text-xs sm:text-sm font-medium text-primary-foreground shadow-soft transition-all duration-200 hover:bg-primary/90 hover:shadow-glow"
-              >
-                {translations[language].signup}
+                Sign In / Register
               </button>
             </div>
           )}
