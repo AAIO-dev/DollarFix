@@ -871,13 +871,13 @@ function Header({ language, setLanguage, onOpenAuth }: { language: Language; set
                 <span className="hidden sm:inline">{translations[language].logout}</span>
               </button>
             </div>
-          ) : (
+         ) : (
             <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={onOpenAuth}
                 className="inline-flex h-8 sm:h-10 items-center justify-center rounded-lg bg-primary px-3 sm:px-5 text-xs sm:text-sm font-medium text-primary-foreground shadow-soft transition-all duration-200 hover:bg-primary/90 hover:shadow-glow"
               >
-                Sign In / Register
+                {translations[language].login} / {translations[language].signup}
               </button>
             </div>
           )}
