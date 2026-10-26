@@ -245,7 +245,11 @@ const createCloudCheckout = createServerFn({ method: "POST" })
       apiVersion: "2024-06-20",
     });
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: [
+        "card", 
+        "cpmt_1UUhoBCXmAUBsCGpprRx0LiH",
+        "cpmt_1UUhnoCXmAUBsCGpM4cpTyb4"
+      ],
       line_items: [{ price: data.priceId, quantity: 1 }],
       mode: "payment",
       client_reference_id: data.userId,
@@ -263,7 +267,11 @@ const createGuestCheckout = createServerFn({ method: "POST" })
       apiVersion: "2024-06-20",
     });
     const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
+      payment_method_types: [
+        "card", 
+        "cpmt_1UUhoBCXmAUBsCGpprRx0LiH",
+        "cpmt_1UUhnoCXmAUBsCGpM4cpTyb4"
+      ],
       line_items: [{ price: data.priceId, quantity: 1 }],
       mode: "payment",
       success_url: data.returnUrl + "?success=true",
